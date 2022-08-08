@@ -4,11 +4,23 @@ const dotenv = require("dotenv");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const authRoutes = require("./routes/auth");
+const bodyParser = require("body-parser");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
+app.use(bodyParser.json());
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
 dotenv.config();
 app.use(morgan("tiny"));
 
