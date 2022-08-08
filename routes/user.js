@@ -2,7 +2,8 @@ const router = require("express").Router();
 const userFetchController = require("../controllers/userFetch");
 const userUpdateController = require("../controllers/userUpdate");
 const authMiddleware = require("../middleware/auth");
-``;
+const { body } = require("express-validator");
+
 // URL: /user/:id
 // METHOD: GET
 router.get("/:id", authMiddleware, userFetchController.getUserById);
