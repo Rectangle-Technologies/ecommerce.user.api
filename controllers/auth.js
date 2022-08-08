@@ -1,9 +1,16 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { validationResult } = require("express-validator");
 
 exports.signup = async (req, res, next) => {
   const { email, firstName, lastName, password, contact, address } = req.body;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res
+      .status(422)
+      .json({ message: "Validation error", errors: errors.array() });
+  }
   try {
     const user = await User.findOne({ email: email });
     if (user) {
