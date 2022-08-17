@@ -16,9 +16,6 @@ exports.getAllUsers = async (req, res, next) => {
 };
 
 exports.getUserById = async (req, res, next) => {
-  if (req.user.type !== "admin") {
-    return res.status(401).json({ message: "Not authorized!" });
-  }
   try {
     const user = await User.findById(req.params.id).select("-password");
     if (!user) {

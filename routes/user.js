@@ -10,7 +10,7 @@ router.get("/all", authMiddleware, userFetchController.getAllUsers);
 
 // URL: /user/:id
 // METHOD: GET
-router.get("/:id", authMiddleware, userFetchController.getUserById);
+router.get("/:id", userFetchController.getUserById);
 
 // URL: /user/update
 // METHOD: PUT
