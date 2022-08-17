@@ -4,13 +4,13 @@ const userUpdateController = require("../controllers/userUpdate");
 const authMiddleware = require("../middleware/auth");
 const { body } = require("express-validator");
 
-// URL: /user/:id
-// METHOD: GET
-router.get("/:id", authMiddleware, userFetchController.getUserById);
-
 // URL: /user/all
 // METHOD: GET
 router.get("/all", authMiddleware, userFetchController.getAllUsers);
+
+// URL: /user/:id
+// METHOD: GET
+router.get("/:id", authMiddleware, userFetchController.getUserById);
 
 // URL: /user/update
 // METHOD: PUT

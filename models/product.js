@@ -21,35 +21,32 @@ const ProductSchema = new mongoose.Schema({
       },
     },
   ],
-  variant: [
+  status: {
+    type: String,
+    enum: ["Draft", "Published"],
+  },
+  imageUrls: [
     {
-      name: {
-        type: String,
-        default: "Default",
-      },
-      imageUrls: [
-        {
-          type: String,
-        },
-      ],
-      mrp: {
-        type: Number,
-        required: true,
-      },
-      price: {
-        type: Number,
-        required: true,
-      },
-      type: {
-        type: String,
-        enum: ["STOCK", "ORDER"],
-      },
-      stock: {
-        type: Number,
-        default: 0,
-      },
+      type: String,
     },
   ],
+  mrp: {
+    type: Number,
+    required: true,
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
+  type: {
+    type: String,
+    enum: ["STOCK", "ORDER"],
+    default: "STOCK",
+  },
+  stock: {
+    type: Number,
+    default: 0,
+  },
 });
 
 module.exports = mongoose.model("Product", ProductSchema);

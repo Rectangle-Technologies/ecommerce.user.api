@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
+const cartRoutes = require("./routes/cart");
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use(morgan("tiny"));
 
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
+app.use("/cart", cartRoutes);
 
 app.use("/", (req, res, next) => {
   res.status(200).json({ message: "Hello" });
