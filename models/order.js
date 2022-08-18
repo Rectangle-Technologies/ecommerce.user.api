@@ -21,10 +21,6 @@ const OrderSchema = new mongoose.Schema(
           type: String,
           required: true,
         },
-        variant: {
-          type: String,
-          required: true,
-        },
       },
     ],
     amount: {

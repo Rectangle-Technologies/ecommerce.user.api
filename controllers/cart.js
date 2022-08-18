@@ -3,7 +3,7 @@ const Product = require("../models/product");
 
 exports.addToCart = async (req, res, next) => {
   try {
-    const { productId, quantity, size, price } = req.body;
+    const { productId, quantity, size } = req.body;
     const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).json({
@@ -23,13 +23,13 @@ exports.addToCart = async (req, res, next) => {
       user.cart.products.push({
         productId,
         quantity,
-        price,
+        price: product.price,
         size,
       });
     } else {
       user.cart.products[idx].quantity += quantity;
     }
-    user.cart.total += price * quantity;
+    user.cart.total += product.price * quantity;
     await user.save();
     res.status(200).json({
       message: "Product added to cart",
@@ -66,7 +66,6 @@ exports.deleteFromCart = async (req, res, next) => {
     } else {
       user.cart.products[idx].quantity--;
     }
-    console.log(user.cart);
     await user.save();
     res.status(200).json({
       message: "Product deleted from cart",
