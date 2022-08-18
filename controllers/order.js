@@ -1,4 +1,5 @@
 const Order = require("../models/order");
+const User = require("../models/user");
 
 exports.createOrder = async (req, res, next) => {
   try {
@@ -9,12 +10,15 @@ exports.createOrder = async (req, res, next) => {
         message: "Please provide products and amount",
       });
     }
+    const user = await User.findById(userId);
     const order = new Order({
       userId,
       products,
       amount,
     });
     await order.save();
+    user.orders.push(order._id);
+    await user.save();
     res.status(201).json({
       message: "Order placed successfully!",
       order,

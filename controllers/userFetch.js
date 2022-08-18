@@ -5,7 +5,10 @@ exports.getAllUsers = async (req, res, next) => {
     return res.status(401).json({ message: "Not authorized!" });
   }
   try {
-    const users = await User.find({ type: "user" }).select("-password");
+    const users = await User.find({ type: "user" })
+      .select("-password")
+      .populate("orders")
+      .populate("cart.products.productId");
     res.status(200).json({
       message: "Users fetched successfully",
       users,
@@ -17,7 +20,10 @@ exports.getAllUsers = async (req, res, next) => {
 
 exports.getUserById = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.id).select("-password");
+    const user = await User.findById(req.params.id)
+      .select("-password")
+      .populate("orders")
+      .populate("cart.products.productId");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
