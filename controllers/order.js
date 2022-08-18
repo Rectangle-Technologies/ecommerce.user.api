@@ -30,6 +30,21 @@ exports.createOrder = async (req, res, next) => {
 
 exports.fetchOrders = async (req, res, next) => {
   try {
+    if (req.user.type !== "admin") {
+      return res.status(401).json({ message: "Not authorized!" });
+    }
+    const orders = await Order.find()
+      .populate({
+        path: "userId",
+        select: "-password",
+      })
+      .populate({
+        path: "products.productId",
+      });
+    res.status(200).json({
+      message: "Orders fetched successfully",
+      orders,
+    });
   } catch (err) {
     res.status(500).json({ message: err.message || "Something went wrong" });
   }
