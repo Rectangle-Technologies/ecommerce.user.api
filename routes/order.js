@@ -10,4 +10,8 @@ router.post("/create", authMiddleware, orderController.createOrder);
 // Method: GET
 router.get("/fetch", authMiddleware, orderController.fetchOrders);
 
+// URL: /order/fetch/:id
+// Method: GET
+router.get("/fetch/:id", authMiddleware, orderController.fetchOrder);
+
 module.exports = router;

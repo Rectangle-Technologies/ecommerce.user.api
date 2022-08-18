@@ -49,3 +49,28 @@ exports.fetchOrders = async (req, res, next) => {
     res.status(500).json({ message: err.message || "Something went wrong" });
   }
 };
+
+exports.fetchOrder = async (req, res, next) => {
+  if (req.user.type !== "admin") {
+    return res.status(401).json({ message: "Not authorized!" });
+  }
+  try {
+    const order = await Order.findById(req.params.id)
+      .populate({
+        path: "userId",
+        select: "-password -cart -orders",
+      })
+      .populate({
+        path: "products.productId",
+      });
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+    res.status(200).json({
+      message: "Order fetched successfully",
+      order,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Something went wrong" });
+  }
+};
