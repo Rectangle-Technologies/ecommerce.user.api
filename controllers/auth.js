@@ -70,3 +70,38 @@ exports.login = async (req, res, next) => {
     res.status(500).json({ message: err.message || "Something went wrong" });
   }
 };
+
+exports.adminLogin = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User doesn't exist" });
+    }
+    if (user.type !== "admin") {
+      return res.status(401).json({ message: "Not authorized!" });
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Incorrect password" });
+    }
+    const token = jwt.sign(
+      {
+        id: user._id,
+      },
+      process.env.JWT_SECRET_KEY
+    );
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      user: {
+        email,
+        name: user.name,
+        contact: user.contact,
+        address: user.address,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Something went wrong" });
+  }
+};

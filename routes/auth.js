@@ -41,4 +41,17 @@ router.post(
   authController.login
 );
 
+// METHOD: POST
+// URL: /auth/admin/login
+router.post(
+  "/admin/login",
+  [
+    body("email").isEmail().withMessage("Please enter a valid email"),
+    body("password")
+      .isLength({ min: 6 })
+      .withMessage("Password must be at least 6 characters long"),
+  ],
+  authController.adminLogin
+);
+
 module.exports = router;
