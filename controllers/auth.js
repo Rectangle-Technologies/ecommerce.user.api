@@ -41,6 +41,12 @@ exports.signup = async (req, res, next) => {
 
 exports.login = async (req, res, next) => {
   const { email, password } = req.body;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res
+      .status(422)
+      .json({ message: "Validation error", errors: errors.array() });
+  }
   try {
     const user = await User.findOne({ email });
     if (!user) {
@@ -72,6 +78,12 @@ exports.login = async (req, res, next) => {
 };
 
 exports.adminLogin = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res
+      .status(422)
+      .json({ message: "Validation error", errors: errors.array() });
+  }
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
