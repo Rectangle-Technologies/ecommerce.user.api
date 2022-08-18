@@ -27,3 +27,10 @@ exports.createOrder = async (req, res, next) => {
     res.status(500).json({ message: err.message || "Something went wrong" });
   }
 };
+
+exports.fetchOrders = async (req, res, next) => {
+  try {
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Something went wrong" });
+  }
+};

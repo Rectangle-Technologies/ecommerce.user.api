@@ -7,7 +7,12 @@ exports.getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find({ type: "user" })
       .select("-password")
-      .populate("orders")
+      .populate({
+        path: "orders",
+        populate: {
+          path: "products.productId",
+        },
+      })
       .populate("cart.products.productId");
     res.status(200).json({
       message: "Users fetched successfully",
@@ -22,7 +27,12 @@ exports.getUserById = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id)
       .select("-password")
-      .populate("orders")
+      .populate({
+        path: "orders",
+        populate: {
+          path: "products.productId",
+        },
+      })
       .populate("cart.products.productId");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
