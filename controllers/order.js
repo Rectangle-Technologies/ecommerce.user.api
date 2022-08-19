@@ -18,7 +18,8 @@ exports.createOrder = async (req, res, next) => {
     });
     await order.save();
     user.orders.push(order._id);
-    user.cart = [];
+    user.cart.products = [];
+    user.cart.total = 0;
     await user.save();
     res.status(201).json({
       message: "Order placed successfully!",
@@ -37,7 +38,29 @@ exports.fetchOrders = async (req, res, next) => {
     const orders = await Order.find()
       .populate({
         path: "userId",
-        select: "-password",
+        select: "-password -orders -cart -wishlist",
+      })
+      .populate({
+        path: "products.productId",
+      });
+    res.status(200).json({
+      message: "Orders fetched successfully",
+      orders,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Something went wrong" });
+  }
+};
+
+exports.fetchPendingOrders = async (req, res, next) => {
+  try {
+    if (req.user.type !== "admin") {
+      return res.status(401).json({ message: "Not authorized!" });
+    }
+    const orders = await Order.find({ status: "placed" })
+      .populate({
+        path: "userId",
+        select: "-password -orders -cart -wishlist",
       })
       .populate({
         path: "products.productId",
@@ -59,7 +82,7 @@ exports.fetchOrder = async (req, res, next) => {
     const order = await Order.findById(req.params.id)
       .populate({
         path: "userId",
-        select: "-password -cart -orders",
+        select: "-password -orders -cart -wishlist",
       })
       .populate({
         path: "products.productId",

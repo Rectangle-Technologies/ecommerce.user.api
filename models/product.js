@@ -57,6 +57,12 @@ const ProductSchema = new mongoose.Schema(
         },
       },
     ],
+    category: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ProductCategory",
+      },
+    ],
   },
   {
     timestamps: true,
