@@ -42,7 +42,8 @@ exports.fetchOrders = async (req, res, next) => {
       })
       .populate({
         path: "products.productId",
-      });
+      })
+      .sort({ createdAt: -1 });
     res.status(200).json({
       message: "Orders fetched successfully",
       orders,
@@ -64,7 +65,8 @@ exports.fetchPendingOrders = async (req, res, next) => {
       })
       .populate({
         path: "products.productId",
-      });
+      })
+      .sort({ createdAt: -1 });
     res.status(200).json({
       message: "Orders fetched successfully",
       orders,
