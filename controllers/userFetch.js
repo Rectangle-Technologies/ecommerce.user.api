@@ -1,10 +1,12 @@
 const User = require("../models/user");
 
 exports.getAllUsers = async (req, res, next) => {
+  // Checking authorization
   if (req.user.type !== "admin") {
     return res.status(401).json({ message: "Not authorized!" });
   }
   try {
+    // Fetching uders
     const users = await User.find({ type: "user" })
       .select("-password")
       .populate({
@@ -25,6 +27,7 @@ exports.getAllUsers = async (req, res, next) => {
 
 exports.getUserById = async (req, res, next) => {
   try {
+    // Fetching order
     const user = await User.findById(req.params.id)
       .select("-password")
       .populate({

@@ -3,11 +3,13 @@ const User = require("../models/user");
 exports.updateUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
+    // Finding user
     if (!user) {
       return res.status(404).json({
         message: "User not found",
       });
     }
+    // Updating user
     const { email, firstName, lastName, contact, address } = req.body;
     user.email = email;
     user.firstName = firstName;

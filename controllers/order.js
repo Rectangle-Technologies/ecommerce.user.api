@@ -5,18 +5,22 @@ exports.createOrder = async (req, res, next) => {
   try {
     const userId = req.user._id;
     const { products, amount } = req.body;
+    // Input validation
     if (!products || !amount) {
       return res.status(400).json({
         message: "Please provide products and amount",
       });
     }
+    // Searching user
     const user = await User.findById(userId);
+    // Creating order
     const order = new Order({
       userId,
       products,
       amount,
     });
     await order.save();
+    // Updating user
     user.orders.push(order._id);
     user.cart.products = [];
     user.cart.total = 0;
@@ -32,9 +36,11 @@ exports.createOrder = async (req, res, next) => {
 
 exports.fetchOrders = async (req, res, next) => {
   try {
+    // Checking authorization
     if (req.user.type !== "admin") {
       return res.status(401).json({ message: "Not authorized!" });
     }
+    // Fetching orders
     const orders = await Order.find()
       .populate({
         path: "userId",
@@ -55,9 +61,11 @@ exports.fetchOrders = async (req, res, next) => {
 
 exports.fetchPendingOrders = async (req, res, next) => {
   try {
+    // Checking authorization 
     if (req.user.type !== "admin") {
       return res.status(401).json({ message: "Not authorized!" });
     }
+    // Fetching orders
     const orders = await Order.find({ status: "placed" })
       .populate({
         path: "userId",
@@ -77,10 +85,12 @@ exports.fetchPendingOrders = async (req, res, next) => {
 };
 
 exports.fetchOrder = async (req, res, next) => {
+  // Checking authorization
   if (req.user.type !== "admin") {
     return res.status(401).json({ message: "Not authorized!" });
   }
   try {
+    // Fetching order
     const order = await Order.findById(req.params.id)
       .populate({
         path: "userId",

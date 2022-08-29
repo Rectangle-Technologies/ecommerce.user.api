@@ -6,6 +6,7 @@ const { validationResult } = require("express-validator");
 exports.signup = async (req, res, next) => {
   const { email, firstName, lastName, password, contact, address, type } =
     req.body;
+  // Error validation
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res
@@ -13,14 +14,17 @@ exports.signup = async (req, res, next) => {
       .json({ message: "Validation error", errors: errors.array() });
   }
   try {
+    // Checking if user already exists
     const user = await User.findOne({ email: email });
     if (user) {
       return res
         .status(400)
         .json({ message: "User already exists. Please login!" });
     }
+    // Encrypting password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
+    // Creating user
     const name = firstName + " " + lastName;
     const newUser = await User.create({
       email,
@@ -41,6 +45,7 @@ exports.signup = async (req, res, next) => {
 
 exports.login = async (req, res, next) => {
   const { email, password } = req.body;
+  // Error validation
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res
@@ -48,14 +53,17 @@ exports.login = async (req, res, next) => {
       .json({ message: "Validation error", errors: errors.array() });
   }
   try {
+    // Finding user
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: "User doesn't exist" });
     }
+    // Matching password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: "Incorrect password" });
     }
+    // Generating JWT token
     const token = jwt.sign(
       {
         id: user._id,
@@ -78,6 +86,7 @@ exports.login = async (req, res, next) => {
 };
 
 exports.adminLogin = async (req, res, next) => {
+  // Error validation
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res
@@ -86,17 +95,21 @@ exports.adminLogin = async (req, res, next) => {
   }
   try {
     const { email, password } = req.body;
+    // Searching user
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: "User doesn't exist" });
     }
+    // Checking if admin
     if (user.type !== "admin") {
       return res.status(401).json({ message: "Not authorized!" });
     }
+    // Checking password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: "Incorrect password" });
     }
+    // Generating JWT token
     const token = jwt.sign(
       {
         id: user._id,
