@@ -1,10 +1,14 @@
 const router = require("express").Router();
 const authMiddleware = require("../middleware/auth");
 const orderController = require("../controllers/order");
+const { body } = require('express-validator')
 
 // URL: /order/create
 // Method: POST
-router.post("/create", authMiddleware, orderController.createOrder);
+router.post("/create", [
+  body('products').isArray().withMessage('Select one product'),
+  body('amount').isFloat().withMessage('Please enter valid amount')
+], authMiddleware, orderController.createOrder);
 
 // URL: /order/fetch
 // Method: GET

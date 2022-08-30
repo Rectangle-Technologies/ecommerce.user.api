@@ -1,7 +1,14 @@
 const User = require("../models/user");
 const Product = require("../models/product");
+const { validationResult } = require('express-validator');
 
 exports.addToCart = async (req, res, next) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res
+      .status(422)
+      .json({ message: "Validation error", errors: errors.array() });
+  }
   try {
     const { productId, quantity, size } = req.body;
     // Finding user
