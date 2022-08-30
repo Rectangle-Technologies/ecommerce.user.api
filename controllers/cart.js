@@ -12,7 +12,7 @@ exports.addToCart = async (req, res, next) => {
   try {
     const { productId, quantity, size } = req.body;
     // Finding user
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user._id).populate('cart.products.productId');
     if (!user) {
       return res.status(404).json({
         message: "User not found",
@@ -27,7 +27,7 @@ exports.addToCart = async (req, res, next) => {
     }
     // Checking if product already in cart
     const idx = user.cart.products.findIndex(
-      (p) => p.productId.toString() === productId && p.size === size
+      (p) => p.productId._id.toString() === productId && p.size === size
     );
     if (idx === -1) {
       // Product not in cart
@@ -59,7 +59,7 @@ exports.deleteFromCart = async (req, res, next) => {
   try {
     const { size } = req.body;
     const productId = req.params.productId;
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user._id).populate('cart.products.productId');
     // Searching user
     if (!user) {
       return res.status(404).json({
@@ -68,7 +68,7 @@ exports.deleteFromCart = async (req, res, next) => {
     }
     // Searching product in cart
     const idx = user.cart.products.findIndex(
-      (p) => p.productId.toString() === productId && p.size === size
+      (p) => p.productId._id.toString() === productId && p.size === size
     );
     if (idx === -1) {
       return res.status(404).json({

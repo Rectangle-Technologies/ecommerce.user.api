@@ -9,13 +9,13 @@ exports.getAllUsers = async (req, res, next) => {
     // Fetching uders
     const users = await User.find({ type: "user" })
       .select("-password")
-      .populate({
-        path: "orders",
-        populate: {
-          path: "products.productId",
-        },
-      })
-      .populate("cart.products.productId");
+    // .populate({
+    //   path: "orders",
+    //   populate: {
+    //     path: "products.productId",
+    //   },
+    // })
+    // .populate("cart.products.productId");
     res.status(200).json({
       message: "Users fetched successfully",
       users,
@@ -29,14 +29,14 @@ exports.getUserById = async (req, res, next) => {
   try {
     // Fetching order
     const user = await User.findById(req.params.id)
-      .select("-password")
-      .populate({
-        path: "orders",
-        populate: {
-          path: "products.productId",
-        },
-      })
-      .populate("cart.products.productId");
+    // .select("-password")
+    // .populate({
+    //   path: "orders",
+    //   populate: {
+    //     path: "products.productId",
+    //   },
+    // })
+    // .populate("cart.products.productId");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
