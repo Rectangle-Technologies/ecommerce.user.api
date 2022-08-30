@@ -21,4 +21,8 @@ router.post(
   cartController.deleteFromCart
 );
 
+// URL: /cart/get
+// METHOD: GET
+router.get('/get', authMiddleware, cartController.fetchCart)
+
 module.exports = router;
