@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const { validationResult } = require("express-validator");
 
 exports.signup = async (req, res, next) => {
-  const { email, firstName, lastName, password, contact, address, type } =
+  const { email, firstName, lastName, password, contact, line1, city, state, pincode, type } =
     req.body;
   // Error validation
   const errors = validationResult(req);
@@ -31,7 +31,12 @@ exports.signup = async (req, res, next) => {
       password: hashedPassword,
       name,
       contact,
-      address,
+      address: {
+        line1,
+        city,
+        state,
+        pincode,
+      },
       type,
     });
     res.status(201).json({

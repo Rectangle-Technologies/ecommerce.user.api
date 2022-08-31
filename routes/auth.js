@@ -23,7 +23,16 @@ router.post(
       }
       return true;
     }),
-    body("address").not().isEmpty().withMessage("Please enter your address"),
+    body("line1").not().isEmpty().withMessage("Please enter your address"),
+    body("city").not().isEmpty().withMessage("Please enter your city"),
+    body("state").not().isEmpty().withMessage("Please enter your state"),
+    body('pincode').custom(value => {
+      const regex = /^[1-9]{1}[0-9]{5}$/
+      if (!regex.test(value)) {
+        throw new Error('Invalid pincode')
+      }
+      return true;
+    })
   ],
   authController.signup
 );
