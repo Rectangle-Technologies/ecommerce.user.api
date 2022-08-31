@@ -4,7 +4,7 @@ const User = require("../models/user");
 exports.createOrder = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const { products, amount } = req.body;
+    const { products, amount, instructions } = req.body;
     // Input validation
     if (!products || !amount) {
       return res.status(400).json({
@@ -18,6 +18,7 @@ exports.createOrder = async (req, res, next) => {
       userId,
       products,
       amount,
+      instructions
     });
     await order.save();
     // Updating user

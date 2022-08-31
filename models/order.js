@@ -32,6 +32,9 @@ const OrderSchema = new mongoose.Schema(
       enum: ["placed", "dispatched", "delivered"],
       default: "placed",
     },
+    instructions: {
+      type: String
+    }
   },
   {
     timestamps: true,
