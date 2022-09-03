@@ -21,6 +21,9 @@ exports.createOrder = async (req, res, next) => {
       instructions
     });
     await order.save();
+
+    const populatedOrder = await Order.findById(order._id).populate("products.productId");
+
     // Updating user
     user.orders.push(order._id);
     user.cart.products = [];
@@ -28,7 +31,7 @@ exports.createOrder = async (req, res, next) => {
     await user.save();
     res.status(201).json({
       message: "Order placed successfully!",
-      order,
+      order: populatedOrder,
     });
   } catch (err) {
     res.status(500).json({ message: err.message || "Something went wrong" });
