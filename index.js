@@ -10,6 +10,7 @@ const userRoutes = require("./routes/user");
 const cartRoutes = require("./routes/cart");
 const orderRoutes = require("./routes/order");
 const wishlistRoutes = require("./routes/wishlist");
+const emailRoutes = require('./routes/email')
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use("/user", userRoutes);
 app.use("/cart", cartRoutes);
 app.use("/order", orderRoutes);
 app.use("/wishlist", wishlistRoutes);
+app.use('/email', emailRoutes)
 
 app.use("/", (req, res, next) => {
   res.status(200).json({ message: "Hello" });
