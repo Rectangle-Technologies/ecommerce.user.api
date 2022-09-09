@@ -1,5 +1,6 @@
 const Order = require("../models/order");
 const User = require("../models/user");
+const Product = require('../models/product')
 const nodemailer = require('nodemailer')
 
 exports.createOrder = async (req, res, next) => {
@@ -14,6 +15,29 @@ exports.createOrder = async (req, res, next) => {
     }
     // Searching user
     const user = await User.findById(userId);
+
+    // Checking for products
+    products.forEach(async (product) => {
+      const prod = await Product.findById(product.productId)
+      if (!prod) {
+        return res.status(404).json({ message: 'Product not found' })
+      }
+      const sizeObjectIdx = prod.sizes.findIndex(s => s.title === product.size)
+      if (sizeObjectIdx === -1) {
+        return res.status(400).json({ message: 'Size unavailable' })
+      }
+      if (prod.type !== 'ORDER' && prod.sizes[sizeObjectIdx].stock <= 0) {
+        return res.status(400).json({ message: 'Size unavailable' })
+      }
+      if (prod.type === 'STOCK' && prod.sizes[sizeObjectIdx].stock < product.quantity) {
+        return res.status(400).json({ message: 'Size unavailable' })
+      }
+      if (prod.type === 'STOCK') {
+        prod.sizes[sizeObjectIdx].stock -= product.quantity
+      }
+      await prod.save()
+    })
+
     // Creating order
     const order = new Order({
       user: { ...userDetails, id: userId },
