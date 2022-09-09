@@ -29,6 +29,16 @@ exports.addToCart = async (req, res, next) => {
     const idx = user.cart.products.findIndex(
       (p) => p.productId._id.toString() === productId && p.size === size
     );
+
+    // Checking stock of product
+    const sizeObjectIdx = product.sizes.findIndex(s => s.title === size)
+    if (sizeObjectIdx === -1) {
+      return res.status(400).json({ message: 'Size unavailable' })
+    }
+    if (product.type !== 'ORDER' && product.sizes[sizeObjectIdx].stock <= 0) {
+      return res.status(400).json({ message: 'Size unavailable' })
+    }
+
     if (idx === -1) {
       // Product not in cart
       user.cart.products.push({
