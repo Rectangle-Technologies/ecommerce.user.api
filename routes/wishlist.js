@@ -15,4 +15,7 @@ router.post("/remove", [
     body('productId').not().isEmpty().withMessage('Product ID is required')
 ], authMiddleware, wishlistController.removeFromWishlist);
 
+// URL /wishlist/get
+router.get('/get', authMiddleware, wishlistController.fetchWishlist)
+
 module.exports = router;
