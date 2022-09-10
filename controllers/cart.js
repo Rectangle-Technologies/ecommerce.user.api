@@ -38,6 +38,9 @@ exports.addToCart = async (req, res, next) => {
     if (product.type === 'STOCK' && product.sizes[sizeObjectIdx].stock <= 0) {
       return res.status(400).json({ message: 'Size unavailable' })
     }
+    if (product.type === 'STOCK' && product.sizes[sizeObjectIdx].stock < quantity) {
+      return res.status(400).json({ message: 'Insufficient quantity' })
+    }
 
     if (idx === -1) {
       // Product not in cart

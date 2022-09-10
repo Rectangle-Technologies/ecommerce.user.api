@@ -20,20 +20,16 @@ exports.createOrder = async (req, res, next) => {
       const product = products[i]
       const prod = await Product.findById(product.productId)
       if (!prod) {
-        shouldReturn = true
         return res.status(404).json({ message: 'Product not found' })
       }
       const sizeObjectIdx = prod.sizes.findIndex(s => s.title === product.size)
       if (sizeObjectIdx === -1) {
-        shouldReturn = true
         return res.status(400).json({ message: 'Size unavailable' })
       }
       if (prod.type !== 'ORDER' && prod.sizes[sizeObjectIdx].stock <= 0) {
-        shouldReturn = true
         return res.status(400).json({ message: 'Size unavailable' })
       }
       if (prod.type === 'STOCK' && prod.sizes[sizeObjectIdx].stock < product.quantity) {
-        shouldReturn = true
         return res.status(400).json({ message: 'Insufficient quantity' })
       }
       if (prod.type === 'STOCK') {
