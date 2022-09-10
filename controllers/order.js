@@ -15,29 +15,32 @@ exports.createOrder = async (req, res, next) => {
     }
     // Searching user
     const user = await User.findById(userId);
-
     // Checking for products
-    products.forEach(async (product) => {
+    for (let i = 0; i < products.length; i++) {
+      const product = products[i]
       const prod = await Product.findById(product.productId)
       if (!prod) {
+        shouldReturn = true
         return res.status(404).json({ message: 'Product not found' })
       }
       const sizeObjectIdx = prod.sizes.findIndex(s => s.title === product.size)
       if (sizeObjectIdx === -1) {
+        shouldReturn = true
         return res.status(400).json({ message: 'Size unavailable' })
       }
       if (prod.type !== 'ORDER' && prod.sizes[sizeObjectIdx].stock <= 0) {
+        shouldReturn = true
         return res.status(400).json({ message: 'Size unavailable' })
       }
       if (prod.type === 'STOCK' && prod.sizes[sizeObjectIdx].stock < product.quantity) {
-        return res.status(400).json({ message: 'Size unavailable' })
+        shouldReturn = true
+        return res.status(400).json({ message: 'Insufficient quantity' })
       }
       if (prod.type === 'STOCK') {
         prod.sizes[sizeObjectIdx].stock -= product.quantity
       }
       await prod.save()
-    })
-
+    }
     // Creating order
     const order = new Order({
       user: { ...userDetails, id: userId },
@@ -56,20 +59,20 @@ exports.createOrder = async (req, res, next) => {
     await user.save();
 
     // Sending mail
-    const transporter = nodemailer.createTransport({
-      service: 'hotmail',
-      auth: {
-        user: 'samyak.shah123@outlook.com',
-        pass: 'Samyak3009'
-      }
-    })
-    const options = {
-      from: 'samyak.shah123@outlook.com',
-      to: user.email,
-      subject: 'Congratulations! Order successfully placed',
-      text: 'Order placed'
-    }
-    const info = await transporter.sendMail(options)
+    // const transporter = nodemailer.createTransport({
+    //   service: 'hotmail',
+    //   auth: {
+    //     user: 'samyak.shah123@outlook.com',
+    //     pass: 'Samyak3009'
+    //   }
+    // })
+    // const options = {
+    //   from: 'samyak.shah123@outlook.com',
+    //   to: user.email,
+    //   subject: 'Congratulations! Order successfully placed',
+    //   text: 'Order placed'
+    // }
+    // const info = await transporter.sendMail(options)
 
     res.status(201).json({
       message: "Order placed successfully!",
@@ -77,6 +80,7 @@ exports.createOrder = async (req, res, next) => {
     });
   } catch (err) {
     console.log(err)
+    console.log('Error')
     res.status(500).json({ message: err.message || "Something went wrong" });
   }
 };

@@ -35,7 +35,7 @@ exports.addToCart = async (req, res, next) => {
     if (sizeObjectIdx === -1) {
       return res.status(400).json({ message: 'Size unavailable' })
     }
-    if (product.type !== 'ORDER' && product.sizes[sizeObjectIdx].stock <= 0) {
+    if (product.type === 'STOCK' && product.sizes[sizeObjectIdx].stock <= 0) {
       return res.status(400).json({ message: 'Size unavailable' })
     }
 
