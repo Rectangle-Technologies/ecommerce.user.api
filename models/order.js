@@ -61,6 +61,9 @@ const OrderSchema = new mongoose.Schema(
     },
     instructions: {
       type: String
+    },
+    tracking_id: {
+      type: String
     }
   },
   {
