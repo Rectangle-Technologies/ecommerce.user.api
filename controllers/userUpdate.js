@@ -10,17 +10,34 @@ exports.updateUser = async (req, res, next) => {
       });
     }
     // Updating user
-    const { email, firstName, lastName, contact, address } = req.body;
+    const { email, firstName, lastName, contact, line1, city, state, pincode } = req.body;
     user.email = email;
     user.firstName = firstName;
     user.lastName = lastName;
     user.contact = contact;
-    user.address = address;
+    user.address = {
+      line1,
+      city,
+      state,
+      pincode
+    };
     await user.save();
     res.status(200).json({
       message: "User updated successfully",
+      user: {
+        email,
+        name: firstName + ' ' + lastName,
+        contact,
+        address: {
+          line1,
+          city,
+          state,
+          pincode
+        },
+      },
     });
   } catch (err) {
+    console.log(err)
     res.status(500).json({
       message: err.message || "Something went wrong",
     });

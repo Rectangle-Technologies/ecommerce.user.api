@@ -81,7 +81,7 @@ exports.createOrder = async (req, res, next) => {
   }
 };
 
-exports.fetchOrders = async (req, res, next) => {
+exports.fetchAllOrders = async (req, res, next) => {
   try {
     // Checking authorization
     if (req.user.type !== "admin") {
@@ -132,15 +132,11 @@ exports.fetchPendingOrders = async (req, res, next) => {
 };
 
 exports.fetchOrder = async (req, res, next) => {
-  // Checking authorization
-  if (req.user.type !== "admin") {
-    return res.status(401).json({ message: "Not authorized!" });
-  }
   try {
     // Fetching order
     const order = await Order.findById(req.params.id)
       .populate({
-        path: "userId",
+        path: "user.id",
         select: "-password -orders -cart -wishlist",
       })
       .populate({
@@ -149,11 +145,35 @@ exports.fetchOrder = async (req, res, next) => {
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
-    res.status(200).json({
-      message: "Order fetched successfully",
-      order,
-    });
+    if (req.user.type === 'admin' || req.user._id.toString() === order.user.id._id.toString()) {
+      res.status(200).json({
+        message: "Order fetched successfully",
+        order,
+      });
+    } else {
+      res.status(401).json({ message: 'Not authenticated!' })
+    }
   } catch (err) {
     res.status(500).json({ message: err.message || "Something went wrong" });
   }
 };
+
+exports.fetchOrders = async (req, res) => {
+  try {
+    // Fetching user
+    const user = await User.findById(req.user._id).populate({
+      path: 'orders',
+      populate: {
+        path: 'products.productId',
+        select: 'name imageUrls'
+      },
+      options: {
+        sort: { createdAt: -1 }
+      }
+    })
+    res.status(200).json({ message: 'Orders fetched successfully', orders: user.orders })
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ message: err.message || "Something went wrong" })
+  }
+}

@@ -10,9 +10,13 @@ router.post("/create", [
   body('amount').isFloat().withMessage('Please enter valid amount')
 ], authMiddleware, orderController.createOrder);
 
-// URL: /order/fetch
+// URL: /order/fetch/all
 // Method: GET
-router.get("/fetch", authMiddleware, orderController.fetchOrders);
+router.get("/fetch/all", authMiddleware, orderController.fetchAllOrders);
+
+// URL: /order/fetch
+// METHOD: GET
+router.get('/fetch', authMiddleware, orderController.fetchOrders)
 
 // URL: /order/fetch/pending
 // Method: GET

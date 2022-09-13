@@ -28,15 +28,8 @@ exports.getAllUsers = async (req, res, next) => {
 exports.getUserById = async (req, res, next) => {
   try {
     // Fetching order
-    const user = await User.findById(req.params.id)
-    // .select("-password")
-    // .populate({
-    //   path: "orders",
-    //   populate: {
-    //     path: "products.productId",
-    //   },
-    // })
-    // .populate("cart.products.productId");
+    const user = await User.findById(req.user._id)
+      .select("name contact email address")
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
