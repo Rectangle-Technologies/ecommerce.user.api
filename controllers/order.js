@@ -161,6 +161,8 @@ exports.fetchOrder = async (req, res, next) => {
 exports.fetchOrders = async (req, res) => {
   try {
     // Fetching user
+    const page = Number.parseInt(req.query.page) || 1
+    const limit = Number.parseInt(req.query.limit) || 10
     const user = await User.findById(req.user._id).populate({
       path: 'orders',
       populate: {
@@ -171,7 +173,10 @@ exports.fetchOrders = async (req, res) => {
         sort: { createdAt: -1 }
       }
     })
-    res.status(200).json({ message: 'Orders fetched successfully', orders: user.orders })
+    const count = user.orders.length
+    const startIdx = (page - 1) * limit
+    const endIdx = Math.min(page * limit, count)
+    res.status(200).json({ message: 'Orders fetched successfully', orders: user.orders.splice(startIdx, endIdx), count })
   } catch (err) {
     console.log(err)
     res.status(500).json({ message: err.message || "Something went wrong" })
