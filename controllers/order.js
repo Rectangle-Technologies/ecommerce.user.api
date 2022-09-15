@@ -90,10 +90,6 @@ exports.fetchAllOrders = async (req, res, next) => {
     // Fetching orders
     const orders = await Order.find()
       .populate({
-        path: "userId",
-        select: "-password -orders -cart -wishlist",
-      })
-      .populate({
         path: "products.productId",
       })
       .sort({ createdAt: -1 });
@@ -115,10 +111,6 @@ exports.fetchPendingOrders = async (req, res, next) => {
     // Fetching orders
     const orders = await Order.find({ status: "placed" })
       .populate({
-        path: "userId",
-        select: "-password -orders -cart -wishlist",
-      })
-      .populate({
         path: "products.productId",
       })
       .sort({ createdAt: -1 });
@@ -135,10 +127,6 @@ exports.fetchOrder = async (req, res, next) => {
   try {
     // Fetching order
     const order = await Order.findById(req.params.id)
-      .populate({
-        path: "user.id",
-        select: "-password -orders -cart -wishlist",
-      })
       .populate({
         path: "products.productId",
       });
