@@ -80,9 +80,17 @@ io.use((socket, next) => {
 io.on('connection', async (socket) => {
     // make room based on user.type
     socket.join(socket.type);
+    console.log(io.sockets.adapter.rooms);
 
     // disconnect from room after disconnect
     socket.on('disconnect', async () => {
+        console.log(io.sockets.adapter.rooms);
         socket.leave(socket.type);
     });
+
+    socket.on("orderCreated", async (data) => {
+        console.log(data);
+        // socket.emit("orderCreated");
+        socket.to("admin").emit("orderCreated", data);
+    })
 });
