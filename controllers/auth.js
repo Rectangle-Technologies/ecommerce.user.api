@@ -83,6 +83,7 @@ exports.login = async (req, res, next) => {
         name: user.name,
         contact: user.contact,
         address: user.address,
+        cartTotal: user.cart.products.length
       },
     });
   } catch (err) {
