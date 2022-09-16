@@ -60,6 +60,7 @@ exports.addToCart = async (req, res, next) => {
     res.status(200).json({
       message: "Product added to cart",
       cart: user.cart,
+      cartTotal: user.cart.products.length
     });
   } catch (err) {
     res.status(500).json({
@@ -99,6 +100,7 @@ exports.deleteFromCart = async (req, res, next) => {
     res.status(200).json({
       message: "Product deleted from cart",
       cart: user.cart,
+      cartTotal: user.cart.products.length
     });
   } catch (err) {
     res.status(500).json({
