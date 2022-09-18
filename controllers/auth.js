@@ -107,7 +107,7 @@ exports.adminLogin = async (req, res, next) => {
       return res.status(404).json({ message: "User doesn't exist" });
     }
     // Checking if admin
-    if (user.type !== "admin") {
+    if (user.type !== "admin" && user.type !== 'staff') {
       return res.status(401).json({ message: "Not authorized!" });
     }
     // Checking password
@@ -130,9 +130,59 @@ exports.adminLogin = async (req, res, next) => {
         name: user.name,
         contact: user.contact,
         address: user.address,
+        type: user.type
       },
     });
   } catch (err) {
+    res.status(500).json({ message: err.message || "Something went wrong" });
+  }
+};
+
+exports.adminSignup = async (req, res, next) => {
+  if (req.user.type !== 'admin') {
+    return res.status(401).json({ message: 'Not authorized!' })
+  }
+  const { email, firstName, lastName, password, contact, type } =
+    req.body;
+  // Error validation
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res
+      .status(422)
+      .json({ message: "Validation error", errors: errors.array() });
+  }
+  try {
+    // Checking if user already exists
+    const user = await User.findOne({ email: email });
+    if (user) {
+      return res
+        .status(400)
+        .json({ message: "User already exists. Please login!" });
+    }
+    // Encrypting password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    // Creating user
+    const name = firstName + " " + lastName;
+    const newUser = await User.create({
+      email,
+      password: hashedPassword,
+      name,
+      contact,
+      address: {
+        line1: 'F-21, Sacred Heart World, Opposite of Sacred Heart Town, Wanowrei',
+        city: 'Pune',
+        state: 'Maharashtra',
+        pincode: '411040',
+      },
+      type,
+    });
+    res.status(201).json({
+      message: "User created successfully",
+      user: newUser,
+    });
+  } catch (err) {
+    console.log(err)
     res.status(500).json({ message: err.message || "Something went wrong" });
   }
 };

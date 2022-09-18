@@ -105,7 +105,7 @@ exports.fetchAllOrders = async (req, res, next) => {
 exports.fetchPendingOrders = async (req, res, next) => {
   try {
     // Checking authorization 
-    if (req.user.type !== "admin") {
+    if (req.user.type !== "admin" && req.user.type !== "staff") {
       return res.status(401).json({ message: "Not authorized!" });
     }
     // Fetching orders
