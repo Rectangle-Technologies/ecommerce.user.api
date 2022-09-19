@@ -87,16 +87,27 @@ exports.fetchAllOrders = async (req, res, next) => {
     if (req.user.type !== "admin") {
       return res.status(401).json({ message: "Not authorized!" });
     }
+    const page = Number.parseInt(req.query.page) || 1
+    const limit = Number.parseInt(req.query.limit) || 100
+    const name = req.query.search
     // Fetching orders
-    const orders = await Order.find()
-      .populate({
-        path: "products.productId",
-      })
-      .sort({ createdAt: -1 });
-    res.status(200).json({
-      message: "Orders fetched successfully",
-      orders,
-    });
+    if (name !== '' && name !== 'undefined') {
+      const count = await Order.find({ 'user.name': { $regex: name, $options: 'i' } }).count()
+      const orders = await Order.find({ 'user.name': { $regex: name, $options: 'i' } }).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit);
+      res.status(200).json({
+        message: "Orders fetched successfully",
+        orders,
+        count
+      });
+    } else {
+      const count = await Order.find().count()
+      const orders = await Order.find().sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit);
+      res.status(200).json({
+        message: "Orders fetched successfully",
+        orders,
+        count
+      });
+    }
   } catch (err) {
     res.status(500).json({ message: err.message || "Something went wrong" });
   }
