@@ -6,18 +6,22 @@ const morgan = require("morgan");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 
+// Importing routes
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
 const cartRoutes = require("./routes/cart");
 const orderRoutes = require("./routes/order");
 const wishlistRoutes = require("./routes/wishlist");
 const emailRoutes = require('./routes/email');
+const voucherRoutes = require('./routes/voucher')
 
 // configuring app for socket and HTTPS server
 const app = express();
 const server = http.createServer(app);
 
+// Configuring CORS
 app.use(cors());
+// Body parser
 app.use(express.json());
 app.use(
     express.urlencoded({
@@ -30,15 +34,19 @@ app.use(
         extended: true,
     })
 );
+// .env configuration
 dotenv.config();
+// Morgan configuration
 app.use(morgan("tiny"));
 
+// Routes
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
 app.use("/cart", cartRoutes);
 app.use("/order", orderRoutes);
 app.use("/wishlist", wishlistRoutes);
 app.use('/email', emailRoutes)
+app.use('/voucher', voucherRoutes)
 
 mongoose
     .connect(process.env.DB_CONNECTION, {
@@ -80,16 +88,13 @@ io.use((socket, next) => {
 io.on('connection', async (socket) => {
     // make room based on user.type
     socket.join(socket.type);
-    console.log(io.sockets.adapter.rooms);
 
     // disconnect from room after disconnect
     socket.on('disconnect', async () => {
-        console.log(io.sockets.adapter.rooms);
         socket.leave(socket.type);
     });
 
     socket.on("orderCreated", async (data) => {
-        console.log(data);
         // socket.emit("orderCreated");
         socket.to("admin").emit("orderCreated", data);
     })
