@@ -64,6 +64,10 @@ const OrderSchema = new mongoose.Schema(
     },
     tracking_id: {
       type: String
+    },
+    voucher: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Voucher'
     }
   },
   {

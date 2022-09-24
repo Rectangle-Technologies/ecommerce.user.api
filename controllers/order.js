@@ -1,12 +1,13 @@
 const Order = require("../models/order");
 const User = require("../models/user");
 const Product = require('../models/product')
+const Voucher = require('../models/voucher')
 const nodemailer = require('nodemailer')
 
 exports.createOrder = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const { products, amount, instructions, userDetails } = req.body;
+    const { products, amount, instructions, userDetails, voucherName } = req.body;
     // Input validation
     if (!products || !amount) {
       return res.status(400).json({
@@ -37,14 +38,26 @@ exports.createOrder = async (req, res, next) => {
       }
       await prod.save()
     }
+
+    // Adding voucher details
+    const voucher = await Voucher.findOne({ name: voucherName })
+    console.log(voucherName)
+    console.log(voucher)
+    if (!voucher) {
+      return res.status(404).json({ message: 'Voucher not found' })
+    }
     // Creating order
     const order = new Order({
       user: { ...userDetails, id: userId },
       products,
       amount,
-      instructions
+      instructions,
+      voucher: voucher._id
     });
-    await order.save();
+    const newOrder = await order.save();
+    // Adding order to voucher
+    voucher.orders.push(newOrder._id)
+    await voucher.save()
 
     const populatedOrder = await Order.findById(order._id).populate("products.productId");
 
