@@ -41,8 +41,6 @@ exports.createOrder = async (req, res, next) => {
 
     // Adding voucher details
     const voucher = await Voucher.findOne({ name: voucherName })
-    console.log(voucherName)
-    console.log(voucher)
     if (!voucher) {
       return res.status(404).json({ message: 'Voucher not found' })
     }
