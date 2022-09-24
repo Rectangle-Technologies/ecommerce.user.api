@@ -43,3 +43,21 @@ exports.updateUser = async (req, res, next) => {
     });
   }
 };
+
+exports.deleteUser = async (req, res) => {
+  if (req.user.type !== 'admin') {
+    return res.status(401).json({ message: 'Not authorized!' })
+  }
+  try {
+    const user = await User.findByIdAndDelete(req.params.id)
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+    res.status(200).json({ message: 'User deleted' })
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({
+      message: err.message || "Something went wrong",
+    });
+  }
+}

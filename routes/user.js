@@ -12,6 +12,9 @@ router.get("/all", authMiddleware, userFetchController.getAllUsers);
 // METHOD: GET
 router.get("/fetch", authMiddleware, userFetchController.getUserById);
 
+// URL: /user/admin
+router.get('/admin', authMiddleware, userFetchController.getAdminUsers)
+
 // URL: /user/update
 // METHOD: PUT
 router.put(
@@ -44,5 +47,9 @@ router.put(
   ],
   userUpdateController.updateUser
 );
+
+// URL: /user/:id
+// DESC Delete user
+router.delete('/:id', authMiddleware, userUpdateController.deleteUser)
 
 module.exports = router;
