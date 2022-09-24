@@ -151,6 +151,9 @@ exports.fetchOrder = async (req, res, next) => {
     const order = await Order.findById(req.params.id)
       .populate({
         path: "products.productId",
+      }).populate({
+        path: 'voucher',
+        select: 'name'
       });
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
