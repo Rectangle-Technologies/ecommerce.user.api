@@ -40,9 +40,12 @@ exports.createOrder = async (req, res, next) => {
     }
 
     // Adding voucher details
-    const voucher = await Voucher.findOne({ name: voucherName })
-    if (!voucher) {
-      return res.status(404).json({ message: 'Voucher not found' })
+    let voucher
+    if (voucherName) {
+      voucher = await Voucher.findOne({ name: voucherName })
+      if (!voucher) {
+        return res.status(404).json({ message: 'Voucher not found' })
+      }
     }
     // Creating order
     const order = new Order({
@@ -50,12 +53,14 @@ exports.createOrder = async (req, res, next) => {
       products,
       amount,
       instructions,
-      voucher: voucher._id
+      voucher: voucher?._id
     });
     const newOrder = await order.save();
     // Adding order to voucher
-    voucher.orders.push(newOrder._id)
-    await voucher.save()
+    if (voucherName) {
+      voucher.orders.push(newOrder._id)
+      await voucher.save()
+    }
 
     const populatedOrder = await Order.findById(order._id).populate("products.productId");
 
