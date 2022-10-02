@@ -14,6 +14,7 @@ const orderRoutes = require("./routes/order");
 const wishlistRoutes = require("./routes/wishlist");
 const emailRoutes = require('./routes/email');
 const voucherRoutes = require('./routes/voucher')
+const subscriberRoutes = require('./routes/subscriber')
 
 // configuring app for socket and HTTPS server
 const app = express();
@@ -47,6 +48,7 @@ app.use("/order", orderRoutes);
 app.use("/wishlist", wishlistRoutes);
 app.use('/email', emailRoutes)
 app.use('/voucher', voucherRoutes)
+app.use('/subscriber', subscriberRoutes)
 
 mongoose
     .connect(process.env.DB_CONNECTION, {
