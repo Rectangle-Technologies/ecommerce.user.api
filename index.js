@@ -95,8 +95,6 @@ io.on('connection', async (socket) => {
     });
 
     socket.on("orderCreated", async (data) => {
-        // socket.emit("orderCreated");
         socket.to("admin").emit("orderCreated", data);
-        console.log(data)
     })
 });
