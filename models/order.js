@@ -68,6 +68,9 @@ const OrderSchema = new mongoose.Schema(
     voucher: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Voucher'
+    },
+    paymentId: {
+      type: String
     }
   },
   {
