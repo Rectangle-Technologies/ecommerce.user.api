@@ -15,7 +15,7 @@ exports.signup = async (req, res, next) => {
   }
   try {
     // Checking if user already exists
-    const user = await User.findOne({ email: email });
+    const user = await User.findOne({ contact: contact });
     if (user) {
       return res
         .status(400)
@@ -49,7 +49,7 @@ exports.signup = async (req, res, next) => {
 };
 
 exports.login = async (req, res, next) => {
-  const { email, password } = req.body;
+  const { contact, password } = req.body;
   // Error validation
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -59,7 +59,7 @@ exports.login = async (req, res, next) => {
   }
   try {
     // Finding user
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ contact });
     if (!user) {
       return res.status(404).json({ message: "User doesn't exist" });
     }
@@ -79,7 +79,7 @@ exports.login = async (req, res, next) => {
       message: "Login successful",
       token,
       user: {
-        email,
+        email: user.email,
         name: user.name,
         contact: user.contact,
         address: user.address,

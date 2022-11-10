@@ -43,7 +43,13 @@ router.post(
 router.post(
   "/login",
   [
-    body("email").isEmail().withMessage("Please enter a valid email"),
+    body("contact").custom((value, { req }) => {
+      var regex = /^[6-9]\d{9}$/;
+      if (!regex.test(value)) {
+        throw new Error("Please enter a valid contact number");
+      }
+      return true;
+    }),
     body("password")
       .isLength({ min: 6 })
       .withMessage("Password must be at least 6 characters long"),
