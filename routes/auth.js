@@ -100,4 +100,6 @@ router.post(
 
 router.post("/reset_password", authController.generateForgotPasswordToken);
 
+router.post("/reset_password/:email", authController.updatePassword);
+
 module.exports = router;

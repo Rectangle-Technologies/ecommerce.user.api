@@ -197,6 +197,34 @@ function randomString(length) {
     }
     return result;
 }
+
+exports.updatePassword = async (req, res) => {
+    const { email } = req.params;
+    const { password, token } = req.body;
+
+    const user = await User.find({ email: email })
+    if (user.length === 0) {
+        return res.status(400).json({
+            message: "Invalid email or token"
+        })
+    }
+    if (user[0].reset_password_token !== token) {
+        return res.status(400).json({
+            message: "Invalid email or token"
+        })
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    user[0].password = hashedPassword;
+    user[0].reset_password_token = '';
+    await user[0].save();
+
+    return res.json({
+        message: 'Password reset successfully'
+    })
+}
+
 exports.generateForgotPasswordToken = async (req, res) => {
     const user = await User.find({ email: req.body.email });
     if (!user.length) {
@@ -218,7 +246,7 @@ exports.generateForgotPasswordToken = async (req, res) => {
 
     // const str = await ejs.renderFile('./reset_password.ejs', {}, {});
     // console.log(str);
-    ejs.renderFile(__dirname.substring(0, 42) + '/views/reset_password.ejs', { token: user[0].reset_password_token }, async (err, str) => {
+    ejs.renderFile(__dirname.substring(0, 42) + '/views/reset_password.ejs', { token: user[0].reset_password_token, email: req.body.email }, async (err, str) => {
         const options = {
             from: 'samyak.shah123@outlook.com',
             to: req.body.email,
