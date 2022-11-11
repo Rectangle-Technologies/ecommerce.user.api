@@ -22,6 +22,7 @@ const server = http.createServer(app);
 
 // Configuring CORS
 app.use(cors());
+app.set('view engine', 'ejs')
 // Body parser
 app.use(express.json());
 app.use(

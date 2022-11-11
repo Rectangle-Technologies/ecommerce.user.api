@@ -92,4 +92,6 @@ router.post(
   authController.adminSignup
 );
 
+router.post("/reset_password", authController.generateForgotPasswordToken);
+
 module.exports = router;

@@ -9,6 +9,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  reset_password_token: {
+    type: String,
+  },
   name: {
     type: String,
     required: true,
@@ -20,20 +23,20 @@ const userSchema = new mongoose.Schema({
   address: {
     line1: {
       type: String,
-      required: true
+      required: true,
     },
     city: {
       type: String,
-      required: true
+      required: true,
     },
     state: {
       type: String,
-      required: true
+      required: true,
     },
     pincode: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   orders: [
     {
@@ -43,7 +46,7 @@ const userSchema = new mongoose.Schema({
   ],
   type: {
     type: String,
-    enum: ["user", "admin", 'staff'],
+    enum: ["user", "admin", "staff"],
     default: "user",
   },
   cart: {
