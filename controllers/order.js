@@ -7,7 +7,7 @@ const nodemailer = require('nodemailer')
 exports.createOrder = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const { products, amount, instructions, userDetails, voucherName } = req.body;
+    const { products, amount, instructions, userDetails, voucherName, paymentId } = req.body;
     // Input validation
     if (!products || !amount) {
       return res.status(400).json({
@@ -53,7 +53,8 @@ exports.createOrder = async (req, res, next) => {
       products,
       amount,
       instructions,
-      voucher: voucher?._id
+      voucher: voucher?._id,
+      paymentId
     });
     const newOrder = await order.save();
     // Adding order to voucher
