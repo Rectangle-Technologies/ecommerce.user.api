@@ -244,9 +244,14 @@ exports.generateForgotPasswordToken = async (req, res) => {
         }
     })
 
-    // const str = await ejs.renderFile('./reset_password.ejs', {}, {});
-    // console.log(str);
-    ejs.renderFile(__dirname.substring(0, 42) + '/views/reset_password.ejs', { token: user[0].reset_password_token, email: req.body.email }, async (err, str) => {
+    var dirname = '';
+    const dirs = __dirname.split("/");
+    dirs.map((name, index) => {
+        if (index !== dirs.length - 1) {
+            dirname += name + "/";
+        }
+    })
+    ejs.renderFile(dirname + 'views/reset_password.ejs', { token: user[0].reset_password_token, email: req.body.email }, async (err, str) => {
         const options = {
             from: 'samyak.shah123@outlook.com',
             to: req.body.email,
@@ -256,7 +261,6 @@ exports.generateForgotPasswordToken = async (req, res) => {
         if (err) {
             console.log(err)
         }
-        console.log(str)
         const info = await transporter.sendMail(options)
         await user[0].save()
         return res.json({
