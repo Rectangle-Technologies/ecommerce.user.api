@@ -10,6 +10,7 @@ exports.signup = async (req, res, next) => {
         req.body;
     // Error validation
     const errors = validationResult(req);
+    console.log(errors);
     if (!errors.isEmpty()) {
         return res
             .status(422)

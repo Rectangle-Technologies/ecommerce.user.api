@@ -21,8 +21,9 @@ router.post(
       var regex = /^[6-9]\d{9}$/;
       if (!regex.test(value)) {
         throw new Error("Please enter a valid contact number");
+      } else {
+        return true;
       }
-      return true;
     }),
     body("line1").not().isEmpty().withMessage("Please enter your address"),
     body("city").not().isEmpty().withMessage("Please enter your city"),
