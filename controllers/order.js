@@ -2,7 +2,8 @@ const Order = require("../models/order");
 const User = require("../models/user");
 const Product = require('../models/product')
 const Voucher = require('../models/voucher')
-const nodemailer = require('nodemailer')
+const nodemailer = require('nodemailer');
+const { validationResult } = require("express-validator");
 
 exports.createOrder = async (req, res, next) => {
   try {
@@ -196,6 +197,49 @@ exports.fetchOrders = async (req, res) => {
     const startIdx = (page - 1) * limit
     const endIdx = Math.min(page * limit, count)
     res.status(200).json({ message: 'Orders fetched successfully', orders: user.orders.splice(startIdx, endIdx), count })
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ message: err.message || "Something went wrong" })
+  }
+}
+
+exports.updateTrackingID = async (req, res) => {
+  // Checking authorization 
+  if (req.user.type !== "admin") {
+    return res.status(401).json({ message: "Not authorized!" });
+  }
+  // Check for errors
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res
+      .status(422)
+      .json({ message: "Validation error", errors: errors.array() });
+  }
+  try {
+    // Fetching order and updating
+    const order = await Order.findByIdAndUpdate(req.params.id, { tracking_id: req.body.trackingId, status: 'dispatched' }, { new: true })
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' })
+    }
+    res.json({ message: 'Tracking ID updated successfully', order })
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ message: err.message || "Something went wrong" })
+  }
+}
+
+exports.changeStatusToDelivered = async (req, res) => {
+  // Checking authorization 
+  if (req.user.type !== "admin") {
+    return res.status(401).json({ message: "Not authorized!" });
+  }
+  try {
+    // Fetching order and updating
+    const order = await Order.findByIdAndUpdate(req.params.id, { status: 'delivered' }, { new: true })
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' })
+    }
+    res.json({ message: 'Status changed successfully', order })
   } catch (err) {
     console.log(err)
     res.status(500).json({ message: err.message || "Something went wrong" })
