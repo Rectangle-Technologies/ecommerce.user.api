@@ -21,6 +21,7 @@ const app = express();
 const server = http.createServer(app);
 
 // Configuring CORS
+app.use(morgan("tiny"));
 app.use(cors());
 app.set('view engine', 'ejs')
 // Body parser
@@ -39,7 +40,6 @@ app.use(
 // .env configuration
 dotenv.config();
 // Morgan configuration
-app.use(morgan("tiny"));
 
 // Routes
 app.use("/auth", authRoutes);
