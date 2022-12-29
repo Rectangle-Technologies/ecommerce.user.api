@@ -30,4 +30,14 @@ router.get(
 // Method: GET
 router.get("/fetch/:id", authMiddleware, orderController.fetchOrder);
 
+// URL: /order/trackingID/:id
+// METHID: POST
+router.post('/trackingID/:id', authMiddleware, [
+  body('trackingId').not().isEmpty().withMessage('Enter a tracking ID')
+], orderController.updateTrackingID)
+
+// URL: /order/delivered/:id
+// METHID: POST
+router.post('/delivered/:id', authMiddleware, orderController.changeStatusToDelivered)
+
 module.exports = router;

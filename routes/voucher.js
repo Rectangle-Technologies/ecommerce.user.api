@@ -7,7 +7,7 @@ const { body } = require('express-validator')
 // DESC Create voucher
 router.post('/create', authMiddleWare, voucherController.createVoucher)
 
-// URL /voucher/delete
+// URL /voucher
 // DESC Delete voucher
 router.delete('/:id', authMiddleWare, voucherController.deleteVoucher)
 
