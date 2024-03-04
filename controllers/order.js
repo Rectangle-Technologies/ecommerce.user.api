@@ -4,6 +4,7 @@ const Product = require('../models/product')
 const Voucher = require('../models/voucher')
 const nodemailer = require('nodemailer');
 const { validationResult } = require("express-validator");
+const ejs = require('ejs')
 
 exports.createOrder = async (req, res, next) => {
   try {
@@ -65,6 +66,7 @@ exports.createOrder = async (req, res, next) => {
     }
 
     const populatedOrder = await Order.findById(order._id).populate("products.productId");
+    console.log(populatedOrder.products[0].productId)
 
     // Updating user
     user.orders.push(order._id);
@@ -80,13 +82,30 @@ exports.createOrder = async (req, res, next) => {
         pass: 'Samyak3009'
       }
     })
-    const options = {
-      from: 'samyak.shah123@outlook.com',
-      to: user.email,
-      subject: 'Congratulations! Order successfully placed',
-      text: 'Order placed'
-    }
-    const info = await transporter.sendMail(options)
+    let dollarIndianLocale = Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 2,
+    });
+    const formattedAmount = dollarIndianLocale.format(amount)
+    ejs.renderFile(__dirname + '/../views/order_confirmation.ejs', {
+      order: populatedOrder,
+      date: new Date(populatedOrder.createdAt).toLocaleString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      amount: formattedAmount,
+    }, async (err, data) => {
+      if (err) {
+        console.log(err)
+      } else {
+        const options = {
+          from: 'samyak.shah123@outlook.com',
+          to: user.email,
+          subject: 'Congratulations! Order successfully placed',
+          html: data
+        }
+        const info = await transporter.sendMail(options)
+        // console.log(info)
+      }
+    })
 
     res.status(201).json({
       message: "Order placed successfully!",
